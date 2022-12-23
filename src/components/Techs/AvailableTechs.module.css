@@ -1,7 +1,9 @@
 .techs {
+  position: relative;
+  bottom: 100px;
   max-width: 900px;
   width: 90%;
-  margin: 30px auto;
+  margin: 0 auto;
   animation: techs-appear 1s ease-out forwards;
 }
 
