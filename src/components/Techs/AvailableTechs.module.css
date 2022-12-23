@@ -1,0 +1,24 @@
+.techs {
+  max-width: 900px;
+  width: 90%;
+  margin: 30px auto;
+  animation: techs-appear 1s ease-out forwards;
+}
+
+.techs ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+@keyframes techs-appear {
+  from {
+    opacity: 0;
+    transform: translateY(50px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
