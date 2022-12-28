@@ -1,11 +1,17 @@
+import { useState } from "react";
 import { useCartContext } from "../../store/cart-context";
 import Modal from "../UI/Modal";
 
 import classes from "./Cart.module.css";
 import CartItem from "./CartItem";
+import Checkout from "./Checkout";
 
 function Cart({ onCloseCart }) {
-  const { items, totalAmount, addItem, removeItem } = useCartContext();
+  const [isCheckout, setIsCheckout] = useState(false);
+  const [isSubmitted, setIsSubmitted] = useState(false);
+
+  const { items, totalAmount, addItem, removeItem, clearCart } =
+    useCartContext();
 
   const decimalTotalAmount = `$${totalAmount.toFixed(2)}`;
   const cartIsEmpty = items.length === 0;
@@ -16,6 +22,15 @@ function Cart({ onCloseCart }) {
 
   function cartItemRemoveHandler(id) {
     removeItem(id);
+  }
+
+  function orderHandler() {
+    setIsCheckout(true);
+  }
+
+  function submitHandler() {
+    setIsSubmitted(true);
+    clearCart();
   }
 
   const cartItems = items.map((item) => (
@@ -29,19 +44,48 @@ function Cart({ onCloseCart }) {
     />
   ));
 
-  return (
-    <Modal onCloseCart={onCloseCart}>
+  const modalItems = (
+    <>
       <ul className={classes["cart-items"]}>{cartItems}</ul>
       <div className={classes.total}>
         <span>Total amount</span>
         <span>{decimalTotalAmount}</span>
       </div>
+    </>
+  );
+
+  const modalActions = !isCheckout && (
+    <div className={classes.actions}>
+      <button className={classes["button--alt"]} onClick={onCloseCart}>
+        Close
+      </button>
+      {!cartIsEmpty && (
+        <button className={classes.button} onClick={orderHandler}>
+          Order
+        </button>
+      )}
+    </div>
+  );
+
+  const didSubmitContent = (
+    <>
+      <p>Successfully sent the order!</p>
       <div className={classes.actions}>
         <button className={classes["button--alt"]} onClick={onCloseCart}>
           Close
         </button>
-        {!cartIsEmpty && <button className={classes.button}>Order</button>}
       </div>
+    </>
+  );
+
+  return (
+    <Modal onCloseCart={onCloseCart}>
+      {!isCheckout && !isSubmitted && modalItems}
+      {isCheckout && !isSubmitted && (
+        <Checkout onCancel={onCloseCart} onSubmit={submitHandler} />
+      )}
+      {!isCheckout && !isSubmitted && modalActions}
+      {isSubmitted && didSubmitContent}
     </Modal>
   );
 }
